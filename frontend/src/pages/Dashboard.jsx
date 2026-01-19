@@ -11,7 +11,7 @@ export default function Dashboard() {
       </div>
 
       {/* Glass Container */}
-      <div className="grid md:grid-cols-3 gap-6">.0
+      <div className="grid md:grid-cols-3 gap-6">
         
         {/* Profile */}
         <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-4">
