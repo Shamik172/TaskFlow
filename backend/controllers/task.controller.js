@@ -1,19 +1,17 @@
-import express from "express";
-import {
-  createTask,
-  getTasks,
-  updateTask,
-  deleteTask,
-} from "../controllers/task.controller.js";
-import { auth } from "../middlewares/auth.middleware.js";
+import Task from "../models/Task.model.js";
 
-const router = express.Router();
+export const createTask = async (req, res) => {
 
-router.use(auth);
+};
 
-router.post("/", createTask);
-router.get("/", getTasks);
-router.put("/:id", updateTask);
-router.delete("/:id", deleteTask);
+export const getTasks = async (req, res) => {
 
-export default router;
+};
+
+export const updateTask = async (req, res) => {
+
+};
+
+export const deleteTask = async (req, res) => {
+  
+};
