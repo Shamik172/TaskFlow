@@ -57,17 +57,49 @@ export const login = async (req, res) => {
       { expiresIn: "1d" }
     );
 
-    res.json({
-      message: "Login successful",
-      token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
-    });
+    // SET COOKIE
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 24 * 60 * 60 * 1000,
+      })
+      .json({
+        message: "Login successful",
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        },
+      });
   } catch (error) {
     res.status(500).json({ message: "Login failed" });
   }
 };
+
+
+export const logout = (req, res) => {
+  res
+    .clearCookie("token", {
+      httpOnly: true,
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+    })
+    .json({ message: "Logged out successfully" });
+};
+
+
+export const me = async (req, res) => {
+  res.json({
+    user: {
+      id: req.user._id,
+      name: req.user.name,
+      email: req.user.email,
+      role: req.user.role,
+    },
+  });
+};
+
+

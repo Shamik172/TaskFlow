@@ -1,11 +1,23 @@
+import { useAuth } from "../context/AuthContext"
+import { notify } from "../components/Notification"
+
 export default function Dashboard() {
+  const { user, logout} = useAuth();
+  
+  const handleLogout = async () => {
+    await logout();
+    notify("Logged out Successfully", "success")
+  }
+
   return (
     <div className="min-h-screen p-6">
       
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-semibold">TaskFlow Dashboard</h1>
-        <button className="bg-red-500/80 hover:bg-red-600 px-4 py-2 rounded-lg">
+        <button 
+        onClick={handleLogout}
+        className="bg-red-500/80 hover:bg-red-600 px-4 py-2 rounded-lg">
           Logout
         </button>
       </div>
@@ -16,8 +28,9 @@ export default function Dashboard() {
         {/* Profile */}
         <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-4">
           <h2 className="text-xl mb-2">Profile</h2>
-          <p className="text-gray-300">Name: John Doe</p>
-          <p className="text-gray-300">Email: john@example.com</p>
+          <p className="text-gray-300">Name: {user?.name}</p>
+          <p className="text-gray-300">Email: {user?.email}</p>
+          <p className="text-gray-400 text-sm mt-1">Role: {user?.role}</p>
         </div>
 
         {/* Create Task */}
@@ -42,15 +55,22 @@ export default function Dashboard() {
         <input
           type="text"
           placeholder="Search tasks..."
-          className="flex-1 bg-white/10 backdrop-blur border border-white/20 rounded-lg px-4 py-2"
+          className="flex-1 bg-white/10 backdrop-blur border border-white/20 
+                    rounded-lg px-4 py-2 text-white placeholder-white/60
+                    focus:outline-none focus:ring-2 focus:ring-white/30"
         />
 
-        <select className="bg-white/10 backdrop-blur border border-white/20 rounded-lg px-4 py-2">
-          <option>All</option>
-          <option>Completed</option>
-          <option>Pending</option>
+        <select
+          className="bg-white/10 backdrop-blur border border-white/20 
+                    rounded-lg px-4 py-2 text-white
+                    focus:outline-none focus:ring-2 focus:ring-white/30"
+        >
+          <option className="bg-gray-800 text-white">All</option>
+          <option className="bg-gray-800 text-white">Completed</option>
+          <option className="bg-gray-800 text-white">Pending</option>
         </select>
       </div>
+
 
       {/* Task List */}
       <div className="mt-6 space-y-3">

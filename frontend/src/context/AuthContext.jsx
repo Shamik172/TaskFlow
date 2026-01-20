@@ -1,41 +1,40 @@
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useState } from "react";
+import { getMe, logoutUser } from "../services/auth.service";
 
-const AuthContext = createContext(null)
+const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
-  const [token, setToken] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("token")
-    const storedUser = localStorage.getItem("user")
+    const fetchUser = async () => {
+      try {
+        const res = await getMe();
+        setUser(res.data.user);
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
+  }, []);
 
-    if (storedToken && storedUser) {
-      setToken(storedToken)
-      setUser(JSON.parse(storedUser))
-    }
-    setLoading(false)
-  }, [])
+  const login = (userData) => {
+    setUser(userData);
+  };
 
-  const login = (userData, jwt) => {
-    localStorage.setItem("token", jwt)
-    localStorage.setItem("user", JSON.stringify(userData))
-    setToken(jwt)
-    setUser(userData)
-  }
-
-  const logout = () => {
-    localStorage.clear()
-    setUser(null)
-    setToken(null)
-  }
+  const logout = async () => {
+    await logoutUser();
+    setUser(null);
+  };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
-  )
-}
+  );
+};
 
-export const useAuth = () => useContext(AuthContext)
+export const useAuth = () => useContext(AuthContext);

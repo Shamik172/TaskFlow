@@ -5,11 +5,11 @@ import {
   updateTask,
   deleteTask,
 } from "../controllers/task.controller.js";
-import { auth } from "../middlewares/auth.middleware.js";
+import { authMiddleware } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.use(auth);
+router.use(authMiddleware);
 
 router.post("/", createTask);
 router.get("/", getTasks);
