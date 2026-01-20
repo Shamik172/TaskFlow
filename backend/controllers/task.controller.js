@@ -84,3 +84,29 @@ export const deleteTask = async (req, res) => {
 
   res.json({ message: "Task deleted" });
 };
+
+
+export const getUserTasksAdmin = async (req, res) => {
+  const { userId } = req.params;
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
+  const skip = (page - 1) * limit;
+
+  const [tasks, total] = await Promise.all([
+    Task.find({ user: userId })
+      .sort("-createdAt")
+      .skip(skip)
+      .limit(limit),
+    Task.countDocuments({ user: userId }),
+  ]);
+
+  res.json({
+    tasks,
+    pagination: {
+      page,
+      pages: Math.ceil(total / limit),
+      total,
+    },
+  });
+};
+
