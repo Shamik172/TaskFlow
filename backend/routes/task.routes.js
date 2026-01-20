@@ -6,14 +6,16 @@ import {
   deleteTask,
 } from "../controllers/task.controller.js";
 import { authMiddleware } from "../middlewares/auth.middleware.js";
+import { validate } from "../middlewares/validate.middleware.js";
+import { taskSchema } from "../validations/task.validation.js";
 
 const router = express.Router();
 
 router.use(authMiddleware);
 
-router.post("/", createTask);
+router.post("/", validate(taskSchema), createTask);
 router.get("/", getTasks);
-router.put("/:id", updateTask);
+router.put("/:id",validate(taskSchema), updateTask);
 router.delete("/:id", deleteTask);
 
 export default router;
