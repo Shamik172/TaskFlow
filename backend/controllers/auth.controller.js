@@ -72,6 +72,7 @@ export const login = async (req, res) => {
           name: user.name,
           email: user.email,
           role: user.role,
+          avatar: user.avatar,
         },
       });
   } catch (error) {
@@ -98,6 +99,7 @@ export const me = async (req, res) => {
       name: req.user.name,
       email: req.user.email,
       role: req.user.role,
+      avatar: req.user.avatar,
     },
   });
 };

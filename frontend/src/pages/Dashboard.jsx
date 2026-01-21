@@ -2,9 +2,11 @@ import { useEffect, useState} from 'react'
 import { useAuth } from "../context/AuthContext"
 import { notify } from "../components/Notification"
 import { createTask, getTasks, updateTask, deleteTask as deleteTaskApi} from '../services/task.service';
+import { uploadAvatar } from '../services/user.service';
+import avatar from '../assets/avatar.jpeg'
 
 export default function Dashboard() {
-  const { user, logout} = useAuth();
+  const { user, setUser, logout} = useAuth();
 
   const [tasks, setTasks] = useState([])
   const [title, setTitle] = useState("")
@@ -43,8 +45,9 @@ export default function Dashboard() {
 
   // Toggle task status
   const toggleTask = async (id) => {
+    const taskToUpdate = tasks.find(t => t._id === id);
     try {
-      const res = await updateTask(id, {})
+      const res = await updateTask(id, { title: taskToUpdate.title })
       setTasks(tasks.map(t => (t._id === id ? res.data : t)))
     } catch {
       notify("Update failed", "error")
@@ -59,6 +62,29 @@ export default function Dashboard() {
       notify("Task deleted", "success")
     } catch {
       notify("Delete failed", "error")
+    }
+  }
+
+  const handleAvatarUpload = async (e) => {
+    const file = e.target.files[0];
+    if(!file) return;
+
+    const formData = new FormData();
+    formData.append("avatar", file)
+
+    try {
+      const res = await uploadAvatar(formData);
+
+      // Update local state instantly using the response from Cloudinary/DB
+      if(res.data.avatar) {
+        setUser({
+          ...user,
+          avatar: res.data.avatar  // replaces the old avatar object with the new {url, public_id}
+        });
+        notify("Avatar updated", "success");
+      }
+    } catch {
+      notify("Avatar upload failed", "error")
     }
   }
 
@@ -96,12 +122,35 @@ export default function Dashboard() {
       <div className="grid md:grid-cols-3 gap-6">
         
         {/* Profile */}
-        <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-4">
-          <h2 className="text-xl mb-2">Profile</h2>
-          <p className="text-gray-300">Name: {user?.name}</p>
-          <p className="text-gray-300">Email: {user?.email}</p>
-          <p className="text-gray-400 text-sm mt-1">Role: {user?.role}</p>
-        </div>
+<div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-4 flex flex-col items-center gap-4">
+  
+  {/* Avatar */}
+  <div className="relative">
+    <img
+      src={user?.avatar?.url || avatar}
+      alt="avatar"
+      className="w-24 h-24 rounded-full object-cover border border-white/30"
+    />
+
+    <label className="absolute bottom-0 right-0 bg-blue-600 p-2 rounded-full cursor-pointer hover:bg-blue-700">
+      <input
+        type="file"
+        accept="image/*"
+        hidden
+        onChange={handleAvatarUpload}
+      />
+      📷
+    </label>
+  </div>
+
+  {/* Info */}
+  <div className="text-center">
+    <p className="text-gray-200 font-medium">{user?.name}</p>
+    <p className="text-gray-400 text-sm">{user?.email}</p>
+    <p className="text-gray-500 text-xs">Role: {user?.role}</p>
+  </div>
+</div>
+
 
         {/* Create Task */}
         <div className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-xl p-4 md:col-span-2">

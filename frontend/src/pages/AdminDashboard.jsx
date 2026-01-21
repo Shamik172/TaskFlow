@@ -4,6 +4,7 @@ import { notify } from "../components/Notification";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import UserActivityModal from '../components/UserActivityModal'
+import avatar from "../assets/avatar.jpeg"
 
 export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
@@ -49,7 +50,7 @@ export default function AdminDashboard() {
         <table className="w-full min-w-[600px] border-collapse">
           <thead className="bg-white/10">
             <tr className="text-left text-sm text-gray-300">
-              <th className="p-4">Name</th>
+              <th className="p-4">User</th>
               <th className="p-4">Email</th>
               <th className="p-4">Role</th>
               <th className="p-4 text-right">Action</th>
@@ -62,7 +63,17 @@ export default function AdminDashboard() {
                 key={u._id}
                 className="border-t border-white/10 hover:bg-white/5 transition"
               >
-                <td className="p-4">{u.name}</td>
+                <td className="p-4">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={u.avatar?.url || avatar}
+                      alt={u.name}
+                      className="w-9 h-9 rounded-full object-cover border border-white/20"
+                    />
+                    <span className="font-medium">{u.name}</span>
+                  </div>
+                </td>
+
                 <td className="p-4 text-gray-400">{u.email}</td>
                 <td className="p-4 capitalize">{u.role}</td>
                 <td className="p-4 text-right">
@@ -78,7 +89,7 @@ export default function AdminDashboard() {
           </tbody>
         </table>
       </div>
-      
+
       {/* USERS — MOBILE CARDS */}
       <div className="md:hidden space-y-4">
         {users.map((u) => (
@@ -87,11 +98,21 @@ export default function AdminDashboard() {
             className="bg-white/10 border border-white/20 rounded-xl p-4"
           >
             <div className="space-y-1">
-              <p className="font-semibold text-lg">{u.name}</p>
-              <p className="text-sm text-gray-400">{u.email}</p>
-              <p className="text-sm capitalize">
-                Role: <span className="text-white">{u.role}</span>
-              </p>
+              <div className="flex items-center gap-3">
+                <img
+                  src={u.avatar?.url || avatar}
+                  alt={u.name}
+                  className="w-12 h-12 rounded-full object-cover border border-white/20"
+                />
+                <div>
+                  <p className="font-semibold text-lg">{u.name}</p>
+                  <p className="text-sm text-gray-400">{u.email}</p>
+                  <p className="text-sm capitalize">
+                    Role: <span className="text-white">{u.role}</span>
+                  </p>
+                </div>
+              </div>
+
             </div>
 
             <button
